@@ -8,6 +8,7 @@ import { signInController } from "@/src/interface-adapters/controllers/auth/sign
 
 import { DI_SYMBOLS } from "@/di/types";
 import { MockAuthenticationService } from "@/src/infrastructure/services/authentication.service.mock";
+import { signUpController } from "@/src/interface-adapters/controllers/auth/sign-up.controller";
 
 export function createAuthenticationModule() {
   const authenticationModule = createModule();
@@ -38,6 +39,13 @@ export function createAuthenticationModule() {
     .toHigherOrderFunction(signInController, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ISignInUseCase,
+    ]);
+
+  authenticationModule
+    .bind(DI_SYMBOLS.ISignUpController)
+    .toHigherOrderFunction(signUpController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ISignUpUseCase,
     ]);
 
   return authenticationModule;

@@ -2,10 +2,12 @@ import { IUsersRepository } from "@/src/application/repositories/users.repositor
 import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
 import { ICrashReporterService } from "@/src/application/services/crash-reporter.service.interface";
 import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import { ISignUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
 import {
   ISignInController,
   ISignInUseCase,
 } from "@/src/interface-adapters/controllers/auth/sign-in.controller";
+import { ISignUpController } from "@/src/interface-adapters/controllers/auth/sign-up.controller";
 
 export const DI_SYMBOLS = {
   // Services
@@ -18,9 +20,11 @@ export const DI_SYMBOLS = {
 
   // Use Cases
   ISignInUseCase: Symbol.for("ISignInUseCase"),
+  ISignUpUseCase: Symbol.for("ISignUpUseCase"),
 
   // Controllers
   ISignInController: Symbol.for("ISignInController"),
+  ISignUpController: Symbol.for("ISignUpController"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -34,7 +38,9 @@ export interface DI_RETURN_TYPES {
 
   // Use Cases
   ISignInUseCase: ISignInUseCase;
+  ISignUpUseCase: ISignUpUseCase;
 
   // Controllers
   ISignInController: ISignInController;
+  ISignUpController: ISignUpController;
 }
