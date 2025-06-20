@@ -7,6 +7,7 @@ import { createMonitoringModule } from "@/di/modules/monitoring.module";
 import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 import { createAuthenticationModule } from "./modules/authentication.module";
 import { createUsersModule } from "./modules/users.module";
+import { createTodosModule } from "./modules/todos.module";
 
 const ApplicationContainer = createContainer();
 ApplicationContainer.load(Symbol("MonitoringModule"), createMonitoringModule());
@@ -15,6 +16,7 @@ ApplicationContainer.load(
   createAuthenticationModule()
 );
 ApplicationContainer.load(Symbol("UsersModule"), createUsersModule());
+ApplicationContainer.load(Symbol("TodosModule"), createTodosModule());
 
 export function getInjection<K extends keyof typeof DI_SYMBOLS>(
   symbol: K
