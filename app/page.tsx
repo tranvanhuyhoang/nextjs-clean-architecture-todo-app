@@ -6,12 +6,12 @@ import {
   UnauthenticatedError,
   AuthenticationError,
 } from "@/src/entities/errors/auth";
-// import { Todo } from "@/src/entities/models/todo";
 import { Separator } from "@radix-ui/react-separator";
 import { redirect } from "next/navigation";
 import { CreateTodo } from "./add-todo";
 import { Todos } from "./todos";
 import { Todo } from "@/src/entities/models/todo";
+import { UserMenu } from "@/components/ui/user-menu";
 
 async function getTodos(sessionId: string | undefined) {
   const instrumentationService = getInjection("IInstrumentationService");
@@ -55,7 +55,7 @@ export default async function Home() {
     <Card className="w-full max-w-lg">
       <CardHeader className="flex flex-row items-center">
         <CardTitle className="flex-1">TODOs</CardTitle>
-        {/* <UserMenu /> */}
+        <UserMenu />
       </CardHeader>
       <Separator />
       <CardContent className="flex flex-col p-6 gap-4">

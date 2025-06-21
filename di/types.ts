@@ -4,6 +4,7 @@ import { IAuthenticationService } from "@/src/application/services/authenticatio
 import { ICrashReporterService } from "@/src/application/services/crash-reporter.service.interface";
 import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 import { ITransactionManagerService } from "@/src/application/services/transaction-manager.service.interface";
+import { ISignOutUseCase } from "@/src/application/use-cases/auth/sign-out.use-case";
 import { ISignUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
 import { ICreateTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
 import { IDeleteTodoUseCase } from "@/src/application/use-cases/todos/delete-todo.use-case";
@@ -13,6 +14,7 @@ import {
   ISignInController,
   ISignInUseCase,
 } from "@/src/interface-adapters/controllers/auth/sign-in.controller";
+import { ISignOutController } from "@/src/interface-adapters/controllers/auth/sign-out.controller";
 import { ISignUpController } from "@/src/interface-adapters/controllers/auth/sign-up.controller";
 import { IBulkUpdateController } from "@/src/interface-adapters/controllers/todos/bulk-update.controller";
 import { ICreateTodoController } from "@/src/interface-adapters/controllers/todos/create-todo.controller";
@@ -37,6 +39,7 @@ export const DI_SYMBOLS = {
   ICreateTodoUseCase: Symbol.for("ICreateTodoUseCase"),
   IToggleTodoUseCase: Symbol.for("IToggleTodoUseCase"),
   IDeleteTodoUseCase: Symbol.for("IDeleteTodoUseCase"),
+  ISignOutUseCase: Symbol.for("ISignOutUseCase"),
 
   // Controllers
   ISignInController: Symbol.for("ISignInController"),
@@ -45,6 +48,7 @@ export const DI_SYMBOLS = {
   ICreateTodoController: Symbol.for("ICreateTodoController"),
   IToggleTodoController: Symbol.for("IToggleTodoController"),
   IBulkUpdateController: Symbol.for("IBulkUpdateController"),
+  ISignOutController: Symbol.for("ISignOutController"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -61,6 +65,7 @@ export interface DI_RETURN_TYPES {
   // Use Cases
   ISignInUseCase: ISignInUseCase;
   ISignUpUseCase: ISignUpUseCase;
+  ISignOutUseCase: ISignOutUseCase;
   IGetTodosForUserUseCase: IGetTodosForUserUseCase;
   ICreateTodoUseCase: ICreateTodoUseCase;
   IToggleTodoUseCase: IToggleTodoUseCase;
@@ -73,4 +78,5 @@ export interface DI_RETURN_TYPES {
   ICreateTodoController: ICreateTodoController;
   IToggleTodoController: IToggleTodoController;
   IBulkUpdateController: IBulkUpdateController;
+  ISignOutController: ISignOutController;
 }

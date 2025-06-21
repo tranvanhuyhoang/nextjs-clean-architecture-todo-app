@@ -10,6 +10,8 @@ import { DI_SYMBOLS } from "@/di/types";
 import { MockAuthenticationService } from "@/src/infrastructure/services/authentication.service.mock";
 import { signUpController } from "@/src/interface-adapters/controllers/auth/sign-up.controller";
 import { signUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
+import { signOutUseCase } from "@/src/application/use-cases/auth/sign-out.use-case";
+import { signOutController } from "@/src/interface-adapters/controllers/auth/sign-out.controller";
 
 export function createAuthenticationModule() {
   const authenticationModule = createModule();
@@ -27,6 +29,8 @@ export function createAuthenticationModule() {
       ]);
   }
 
+  // use cases
+
   authenticationModule
     .bind(DI_SYMBOLS.ISignInUseCase)
     .toHigherOrderFunction(signInUseCase, [
@@ -36,10 +40,10 @@ export function createAuthenticationModule() {
     ]);
 
   authenticationModule
-    .bind(DI_SYMBOLS.ISignInController)
-    .toHigherOrderFunction(signInController, [
+    .bind(DI_SYMBOLS.ISignOutUseCase)
+    .toHigherOrderFunction(signOutUseCase, [
       DI_SYMBOLS.IInstrumentationService,
-      DI_SYMBOLS.ISignInUseCase,
+      DI_SYMBOLS.IAuthenticationService,
     ]);
 
   authenticationModule
@@ -50,6 +54,15 @@ export function createAuthenticationModule() {
       DI_SYMBOLS.IUsersRepository,
     ]);
 
+  // controllers
+
+  authenticationModule
+    .bind(DI_SYMBOLS.ISignInController)
+    .toHigherOrderFunction(signInController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ISignInUseCase,
+    ]);
+
   authenticationModule
     .bind(DI_SYMBOLS.ISignUpController)
     .toHigherOrderFunction(signUpController, [
@@ -57,5 +70,12 @@ export function createAuthenticationModule() {
       DI_SYMBOLS.ISignUpUseCase,
     ]);
 
+  authenticationModule
+    .bind(DI_SYMBOLS.ISignOutController)
+    .toHigherOrderFunction(signOutController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.ISignOutUseCase,
+    ]);
   return authenticationModule;
 }

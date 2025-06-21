@@ -4,8 +4,12 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getInjection } from "@/di/container";
 import { Cookie } from "@/src/entities/models/cookie";
-import { AuthenticationError } from "@/src/entities/errors/auth";
+import {
+  AuthenticationError,
+  UnauthenticatedError,
+} from "@/src/entities/errors/auth";
 import { InputParseError } from "@/src/entities/errors/common";
+import { SESSION_COOKIE } from "@/config";
 
 export async function signIn(formData: FormData) {
   const instrumentationService = getInjection("IInstrumentationService");
@@ -96,6 +100,42 @@ export async function signUp(formData: FormData) {
       );
 
       redirect("/");
+    }
+  );
+}
+
+export async function signOut() {
+  const instrumentationService = getInjection("IInstrumentationService");
+  return await instrumentationService.instrumentServerAction(
+    "signOut",
+    { recordResponse: true },
+    async () => {
+      const cookiesStore = cookies();
+      const sessionId = (await cookiesStore).get(SESSION_COOKIE)?.value;
+
+      let blankCookie: Cookie;
+      try {
+        const signOutController = getInjection("ISignOutController");
+        blankCookie = await signOutController(sessionId);
+      } catch (err) {
+        if (
+          err instanceof UnauthenticatedError ||
+          err instanceof InputParseError
+        ) {
+          redirect("/sign-in");
+        }
+        const crashReporterService = getInjection("ICrashReporterService");
+        crashReporterService.report(err);
+        throw err;
+      }
+
+      (await cookies()).set(
+        blankCookie.name,
+        blankCookie.value,
+        blankCookie.attributes
+      );
+
+      redirect("/sign-in");
     }
   );
 }
