@@ -10,6 +10,8 @@ import {
 import { Separator } from "@radix-ui/react-separator";
 import { redirect } from "next/navigation";
 import { CreateTodo } from "./add-todo";
+import { Todos } from "./todos";
+import { Todo } from "@/src/entities/models/todo";
 
 async function getTodos(sessionId: string | undefined) {
   const instrumentationService = getInjection("IInstrumentationService");
@@ -42,7 +44,12 @@ async function getTodos(sessionId: string | undefined) {
 export default async function Home() {
   const sessionId = (await cookies()).get(SESSION_COOKIE)?.value;
 
-  await getTodos(sessionId);
+  let todos: Todo[];
+  try {
+    todos = await getTodos(sessionId);
+  } catch (err) {
+    throw err;
+  }
 
   return (
     <Card className="w-full max-w-lg">
@@ -53,7 +60,7 @@ export default async function Home() {
       <Separator />
       <CardContent className="flex flex-col p-6 gap-4">
         <CreateTodo />
-        {/* <Todos todos={todos} /> */}
+        <Todos todos={todos} />
       </CardContent>
     </Card>
   );

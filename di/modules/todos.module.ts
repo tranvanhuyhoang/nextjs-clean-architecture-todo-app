@@ -5,6 +5,10 @@ import { TodosRepository } from "@/src/infrastructure/repositories/todos.reposit
 import { getTodosForUserController } from "@/src/interface-adapters/controllers/todos/get-todos-for-user.controller";
 import { createTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
 import { createTodoController } from "@/src/interface-adapters/controllers/todos/create-todo.controller";
+import { toggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
+import { toggleTodoController } from "@/src/interface-adapters/controllers/todos/toggle-todo.controller";
+import { bulkUpdateController } from "@/src/interface-adapters/controllers/todos/bulk-update.controller";
+import { deleteTodoUseCase } from "@/src/application/use-cases/todos/delete-todo.use-case";
 
 export function createTodosModule() {
   const todosModule = createModule();
@@ -35,6 +39,20 @@ export function createTodosModule() {
       DI_SYMBOLS.ITodosRepository,
     ]);
 
+  todosModule
+    .bind(DI_SYMBOLS.IToggleTodoUseCase)
+    .toHigherOrderFunction(toggleTodoUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ITodosRepository,
+    ]);
+
+  todosModule
+    .bind(DI_SYMBOLS.IDeleteTodoUseCase)
+    .toHigherOrderFunction(deleteTodoUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ITodosRepository,
+    ]);
+
   //controllers
   todosModule
     .bind(DI_SYMBOLS.IGetTodosForUserController)
@@ -51,6 +69,24 @@ export function createTodosModule() {
       DI_SYMBOLS.IAuthenticationService,
       DI_SYMBOLS.ITransactionManagerService,
       DI_SYMBOLS.ICreateTodoUseCase,
+    ]);
+
+  todosModule
+    .bind(DI_SYMBOLS.IToggleTodoController)
+    .toHigherOrderFunction(toggleTodoController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.IToggleTodoUseCase,
+    ]);
+
+  todosModule
+    .bind(DI_SYMBOLS.IBulkUpdateController)
+    .toHigherOrderFunction(bulkUpdateController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.ITransactionManagerService,
+      DI_SYMBOLS.IToggleTodoUseCase,
+      DI_SYMBOLS.IDeleteTodoUseCase,
     ]);
 
   return todosModule;

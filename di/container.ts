@@ -8,12 +8,17 @@ import { IInstrumentationService } from "@/src/application/services/instrumentat
 import { createAuthenticationModule } from "./modules/authentication.module";
 import { createUsersModule } from "./modules/users.module";
 import { createTodosModule } from "./modules/todos.module";
+import { createTransactionManagerModule } from "./modules/database.module";
 
 const ApplicationContainer = createContainer();
 ApplicationContainer.load(Symbol("MonitoringModule"), createMonitoringModule());
 ApplicationContainer.load(
   Symbol("AuthenticationModule"),
   createAuthenticationModule()
+);
+ApplicationContainer.load(
+  Symbol("TransactionManagerModule"),
+  createTransactionManagerModule()
 );
 ApplicationContainer.load(Symbol("UsersModule"), createUsersModule());
 ApplicationContainer.load(Symbol("TodosModule"), createTodosModule());

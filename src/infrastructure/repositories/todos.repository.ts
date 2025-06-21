@@ -97,4 +97,83 @@ export class TodosRepository implements ITodosRepository {
       }
     );
   }
+
+  async updateTodo(
+    id: number,
+    input: Partial<TodoInsert>,
+    tx?: Transaction
+  ): Promise<Todo> {
+    const invoker = tx ?? db;
+
+    return await this.instrumentationService.startSpan(
+      { name: "TodosRepository > updateTodo" },
+      async () => {
+        try {
+          // Check if todo exists first
+          const existingTodo = await this.getTodo(id);
+          if (!existingTodo) {
+            throw new DatabaseOperationError(`Todo with ID ${id} not found`);
+          }
+
+          const query = invoker
+            .update(todos)
+            .set(input)
+            .where(eq(todos.id, id))
+            .returning();
+
+          const [updated] = await this.instrumentationService.startSpan(
+            {
+              name: query.toSQL().sql,
+              op: "db.query",
+              attributes: { "db.system": "sqlite" },
+            },
+            () => query.execute()
+          );
+
+          if (updated) {
+            return updated;
+          } else {
+            throw new DatabaseOperationError(
+              `Failed to update todo with ID ${id}`
+            );
+          }
+        } catch (err) {
+          this.crashReporterService.report(err);
+          throw err; // TODO: convert to Entities error
+        }
+      }
+    );
+  }
+
+  async deleteTodo(id: number, tx?: Transaction): Promise<void> {
+    const invoker = tx ?? db;
+
+    await this.instrumentationService.startSpan(
+      { name: "TodosRepository > deleteTodo" },
+      async () => {
+        try {
+          const query = invoker
+            .delete(todos)
+            .where(eq(todos.id, id))
+            .returning();
+
+          const [deleted] = await this.instrumentationService.startSpan(
+            {
+              name: query.toSQL().sql,
+              op: "db.query",
+              attributes: { "db.system": "sqlite" },
+            },
+            () => query.execute()
+          );
+
+          if (!deleted) {
+            throw new DatabaseOperationError(`Todo with ID ${id} not found`);
+          }
+        } catch (err) {
+          this.crashReporterService.report(err);
+          throw err; // TODO: convert to Entities error
+        }
+      }
+    );
+  }
 }
