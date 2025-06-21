@@ -6,8 +6,10 @@ import {
   UnauthenticatedError,
   AuthenticationError,
 } from "@/src/entities/errors/auth";
+// import { Todo } from "@/src/entities/models/todo";
 import { Separator } from "@radix-ui/react-separator";
 import { redirect } from "next/navigation";
+import { CreateTodo } from "./add-todo";
 
 async function getTodos(sessionId: string | undefined) {
   const instrumentationService = getInjection("IInstrumentationService");
@@ -50,7 +52,7 @@ export default async function Home() {
       </CardHeader>
       <Separator />
       <CardContent className="flex flex-col p-6 gap-4">
-        {/* <CreateTodo /> */}
+        <CreateTodo />
         {/* <Todos todos={todos} /> */}
       </CardContent>
     </Card>
