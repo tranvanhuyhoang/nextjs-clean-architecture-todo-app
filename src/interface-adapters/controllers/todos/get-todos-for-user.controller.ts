@@ -1,12 +1,12 @@
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import { Todo } from "@/src/entities/models/todo";
-import { IGetTodosForUserUseCase } from "@/src/application/use-cases/todos/get-todos-for-user.use-case";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import type { Todo } from "@/src/entities/models/todo";
+import type { IGetTodosForUserUseCase } from "@/src/application/use-cases/todos/get-todos-for-user.use-case";
 
 function presenter(
   todos: Todo[],
-  instrumentationService: IInstrumentationService
+  instrumentationService: IInstrumentationService,
 ) {
   return instrumentationService.startSpan(
     { name: "getTodosForUser Presenter", op: "serialize" },
@@ -16,7 +16,7 @@ function presenter(
         todo: t.todo,
         userId: t.userId,
         completed: t.completed,
-      }))
+      })),
   );
 }
 
@@ -28,10 +28,10 @@ export const getTodosForUserController =
   (
     instrumentationService: IInstrumentationService,
     authenticationService: IAuthenticationService,
-    getTodosForUserUseCase: IGetTodosForUserUseCase
+    getTodosForUserUseCase: IGetTodosForUserUseCase,
   ) =>
   async (
-    sessionId: string | undefined
+    sessionId: string | undefined,
   ): Promise<ReturnType<typeof presenter>> => {
     return await instrumentationService.startSpan(
       { name: "getTodosForUser Controller" },
@@ -40,13 +40,12 @@ export const getTodosForUserController =
           throw new UnauthenticatedError("Must be logged in to create a todo");
         }
 
-        const { session } = await authenticationService.validateSession(
-          sessionId
-        );
+        const { session } =
+          await authenticationService.validateSession(sessionId);
 
         const todos = await getTodosForUserUseCase(session.userId);
 
         return presenter(todos, instrumentationService);
-      }
+      },
     );
   };

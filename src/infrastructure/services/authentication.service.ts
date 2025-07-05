@@ -3,12 +3,12 @@ import { compare } from "bcrypt-ts";
 
 import { SESSION_COOKIE } from "@/config";
 import { luciaAdapter } from "@/drizzle";
-import { type IUsersRepository } from "@/src/application/repositories/users.repository.interface";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import type { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
+import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import { Cookie } from "@/src/entities/models/cookie";
-import { Session, sessionSchema } from "@/src/entities/models/session";
-import { User } from "@/src/entities/models/user";
+import type { Cookie } from "@/src/entities/models/cookie";
+import { type Session, sessionSchema } from "@/src/entities/models/session";
+import type { User } from "@/src/entities/models/user";
 import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 
 export class AuthenticationService implements IAuthenticationService {
@@ -16,7 +16,7 @@ export class AuthenticationService implements IAuthenticationService {
 
   constructor(
     private readonly _usersRepository: IUsersRepository,
-    private readonly _instrumentationService: IInstrumentationService
+    private readonly _instrumentationService: IInstrumentationService,
   ) {
     this._lucia = new Lucia(luciaAdapter, {
       sessionCookie: {
@@ -36,23 +36,23 @@ export class AuthenticationService implements IAuthenticationService {
 
   validatePasswords(
     inputPassword: string,
-    usersHashedPassword: string
+    usersHashedPassword: string,
   ): Promise<boolean> {
     return this._instrumentationService.startSpan(
       { name: "verify password hash", op: "function" },
-      () => compare(inputPassword, usersHashedPassword)
+      () => compare(inputPassword, usersHashedPassword),
     );
   }
 
   async validateSession(
-    sessionId: string
+    sessionId: string,
   ): Promise<{ user: User; session: Session }> {
     return await this._instrumentationService.startSpan(
       { name: "AuthenticationService > validateSession" },
       async () => {
         const result = await this._instrumentationService.startSpan(
           { name: "lucia.validateSession", op: "function" },
-          () => this._lucia.validateSession(sessionId)
+          () => this._lucia.validateSession(sessionId),
         );
 
         if (!result.user || !result.session) {
@@ -66,41 +66,41 @@ export class AuthenticationService implements IAuthenticationService {
         }
 
         return { user, session: result.session };
-      }
+      },
     );
   }
 
   async createSession(
-    user: User
+    user: User,
   ): Promise<{ session: Session; cookie: Cookie }> {
     return await this._instrumentationService.startSpan(
       { name: "AuthenticationService > createSession" },
       async () => {
         const luciaSession = await this._instrumentationService.startSpan(
           { name: "lucia.createSession", op: "function" },
-          () => this._lucia.createSession(user.id, {})
+          () => this._lucia.createSession(user.id, {}),
         );
 
         const session = sessionSchema.parse(luciaSession);
         const cookie = await this._instrumentationService.startSpan(
           { name: "lucia.createSessionCookie", op: "function" },
-          () => this._lucia.createSessionCookie(session.id)
+          () => this._lucia.createSessionCookie(session.id),
         );
 
         return { session, cookie };
-      }
+      },
     );
   }
 
   async invalidateSession(sessionId: string): Promise<{ blankCookie: Cookie }> {
     await this._instrumentationService.startSpan(
       { name: "lucia.invalidateSession", op: "function" },
-      () => this._lucia.invalidateSession(sessionId)
+      () => this._lucia.invalidateSession(sessionId),
     );
 
     const blankCookie = this._instrumentationService.startSpan(
       { name: "lucia.createBlankSessionCookie", op: "function" },
-      () => this._lucia.createBlankSessionCookie()
+      () => this._lucia.createBlankSessionCookie(),
     );
 
     return { blankCookie };
@@ -109,7 +109,7 @@ export class AuthenticationService implements IAuthenticationService {
   generateUserId(): string {
     return this._instrumentationService.startSpan(
       { name: "AuthenticationService > generateUserId", op: "function" },
-      () => generateIdFromEntropySize(10)
+      () => generateIdFromEntropySize(10),
     );
   }
 }

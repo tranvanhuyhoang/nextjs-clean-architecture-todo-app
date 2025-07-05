@@ -7,7 +7,7 @@ export interface ITodosRepository {
   updateTodo(
     id: number,
     input: Partial<TodoInsert>,
-    tx?: unknown
+    tx?: unknown,
   ): Promise<Todo>;
   deleteTodo(id: number, tx?: unknown): Promise<void>;
 }

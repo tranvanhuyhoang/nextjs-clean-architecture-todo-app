@@ -10,14 +10,14 @@ export type IToggleTodoUseCase = ReturnType<typeof toggleTodoUseCase>;
 export const toggleTodoUseCase =
   (
     instrumentationService: IInstrumentationService,
-    todosRepository: ITodosRepository
+    todosRepository: ITodosRepository,
   ) =>
   (
     input: {
       todoId: number;
     },
     userId: string,
-    tx?: ITransaction
+    tx?: ITransaction,
   ): Promise<Todo> => {
     return instrumentationService.startSpan(
       { name: "toggleTodo Use Case", op: "function" },
@@ -30,7 +30,7 @@ export const toggleTodoUseCase =
 
         if (todo.userId !== userId) {
           throw new UnauthorizedError(
-            "Cannot toggle todo. Reason: unauthorized"
+            "Cannot toggle todo. Reason: unauthorized",
           );
         }
 
@@ -39,10 +39,10 @@ export const toggleTodoUseCase =
           {
             completed: !todo.completed,
           },
-          tx
+          tx,
         );
 
         return updatedTodo;
-      }
+      },
     );
   };

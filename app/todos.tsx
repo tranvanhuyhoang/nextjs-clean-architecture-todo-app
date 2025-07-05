@@ -39,7 +39,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
         }
       }
     },
-    [bulkMode, dirty]
+    [bulkMode, dirty],
   );
 
   const markForDeletion = useCallback(
@@ -60,7 +60,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
         setDeleted(newDeleted);
       }
     },
-    [deleted, dirty]
+    [deleted, dirty],
   );
 
   const updateAll = async () => {

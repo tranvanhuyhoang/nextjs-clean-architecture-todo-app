@@ -1,11 +1,11 @@
 import { compare } from "bcrypt-ts";
 
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import { User } from "@/src/entities/models/user";
-import { Session, sessionSchema } from "@/src/entities/models/session";
-import { type IUsersRepository } from "@/src/application/repositories/users.repository.interface";
-import { Cookie } from "@/src/entities/models/cookie";
+import type { User } from "@/src/entities/models/user";
+import { type Session, sessionSchema } from "@/src/entities/models/session";
+import type { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
+import type { Cookie } from "@/src/entities/models/cookie";
 import { SESSION_COOKIE } from "@/config";
 
 export class MockAuthenticationService implements IAuthenticationService {
@@ -17,13 +17,13 @@ export class MockAuthenticationService implements IAuthenticationService {
 
   validatePasswords(
     inputPassword: string,
-    usersHashedPassword: string
+    usersHashedPassword: string,
   ): Promise<boolean> {
     return compare(inputPassword, usersHashedPassword);
   }
 
   async validateSession(
-    sessionId: string
+    sessionId: string,
   ): Promise<{ user: User; session: Session }> {
     const result = this._sessions[sessionId] ?? { user: null, session: null };
 
@@ -37,7 +37,7 @@ export class MockAuthenticationService implements IAuthenticationService {
   }
 
   async createSession(
-    user: User
+    user: User,
   ): Promise<{ session: Session; cookie: Cookie }> {
     const luciaSession: Session = {
       id: "random_session_id",

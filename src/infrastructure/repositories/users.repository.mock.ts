@@ -1,6 +1,6 @@
 import { hashSync } from "bcrypt-ts";
 
-import { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
+import type { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
 import type { CreateUser, User } from "@/src/entities/models/user";
 import { PASSWORD_SALT_ROUNDS } from "@/config";
 

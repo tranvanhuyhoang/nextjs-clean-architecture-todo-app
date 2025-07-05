@@ -25,7 +25,7 @@ export default async function RootLayout({
       <body
         className={cn(
           "min-h-screen font-sans antialiased flex items-center justify-center",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

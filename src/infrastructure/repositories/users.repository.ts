@@ -3,7 +3,7 @@ import { hash } from "bcrypt-ts";
 
 import { db } from "@/drizzle";
 import { users } from "@/drizzle/schema";
-import { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
+import type { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
 import { DatabaseOperationError } from "@/src/entities/errors/common";
 import type { CreateUser, User } from "@/src/entities/models/user";
 import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
@@ -13,7 +13,7 @@ import { PASSWORD_SALT_ROUNDS } from "@/config";
 export class UsersRepository implements IUsersRepository {
   constructor(
     private readonly instrumentationService: IInstrumentationService,
-    private readonly crashReporterService: ICrashReporterService
+    private readonly crashReporterService: ICrashReporterService,
   ) {}
   async getUser(id: string): Promise<User | undefined> {
     return await this.instrumentationService.startSpan(
@@ -30,7 +30,7 @@ export class UsersRepository implements IUsersRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           return user;
@@ -38,7 +38,7 @@ export class UsersRepository implements IUsersRepository {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -56,7 +56,7 @@ export class UsersRepository implements IUsersRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           return user;
@@ -64,7 +64,7 @@ export class UsersRepository implements IUsersRepository {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
   async createUser(input: CreateUser): Promise<User> {
@@ -74,7 +74,7 @@ export class UsersRepository implements IUsersRepository {
         try {
           const password_hash = await this.instrumentationService.startSpan(
             { name: "hash password", op: "function" },
-            () => hash(input.password, PASSWORD_SALT_ROUNDS)
+            () => hash(input.password, PASSWORD_SALT_ROUNDS),
           );
 
           const newUser: User = {
@@ -90,7 +90,7 @@ export class UsersRepository implements IUsersRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           if (created) {
@@ -102,7 +102,7 @@ export class UsersRepository implements IUsersRepository {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
 }

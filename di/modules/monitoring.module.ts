@@ -7,23 +7,23 @@ import { MockInstrumentationService } from "@/src/infrastructure/services/instru
 import { CrashReporterService } from "@/src/infrastructure/services/crash-reporter.service";
 
 export function createMonitoringModule() {
-  const monitoringModule = createModule();
+	const monitoringModule = createModule();
 
-  if (process.env.NODE_ENV === "test") {
-    monitoringModule
-      .bind(DI_SYMBOLS.IInstrumentationService)
-      .toClass(MockInstrumentationService);
-    monitoringModule
-      .bind(DI_SYMBOLS.ICrashReporterService)
-      .toClass(MockCrashReporterService);
-  } else {
-    monitoringModule
-      .bind(DI_SYMBOLS.IInstrumentationService)
-      .toClass(InstrumentationService);
-    monitoringModule
-      .bind(DI_SYMBOLS.ICrashReporterService)
-      .toClass(CrashReporterService);
-  }
+	if (process.env.NODE_ENV === "test") {
+		monitoringModule
+			.bind(DI_SYMBOLS.IInstrumentationService)
+			.toClass(MockInstrumentationService);
+		monitoringModule
+			.bind(DI_SYMBOLS.ICrashReporterService)
+			.toClass(MockCrashReporterService);
+	} else {
+		monitoringModule
+			.bind(DI_SYMBOLS.IInstrumentationService)
+			.toClass(InstrumentationService);
+		monitoringModule
+			.bind(DI_SYMBOLS.ICrashReporterService)
+			.toClass(CrashReporterService);
+	}
 
-  return monitoringModule;
+	return monitoringModule;
 }

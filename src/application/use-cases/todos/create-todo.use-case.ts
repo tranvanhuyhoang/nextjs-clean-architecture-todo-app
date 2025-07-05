@@ -8,14 +8,14 @@ export type ICreateTodoUseCase = ReturnType<typeof createTodoUseCase>;
 export const createTodoUseCase =
   (
     instrumentationService: IInstrumentationService,
-    todosRepository: ITodosRepository
+    todosRepository: ITodosRepository,
   ) =>
   (
     input: {
       todo: string;
     },
     userId: string,
-    tx?: unknown
+    tx?: unknown,
   ): Promise<Todo> => {
     return instrumentationService.startSpan(
       { name: "createTodo Use Case", op: "function" },
@@ -33,10 +33,10 @@ export const createTodoUseCase =
             userId,
             completed: false,
           },
-          tx
+          tx,
         );
 
         return newTodo;
-      }
+      },
     );
   };

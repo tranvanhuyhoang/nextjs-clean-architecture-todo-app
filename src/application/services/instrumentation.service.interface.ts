@@ -5,11 +5,11 @@ export interface IInstrumentationService {
       op?: string;
       attributes?: Record<string, unknown>;
     },
-    callback: () => T
+    callback: () => T,
   ): T;
   instrumentServerAction<T>(
     name: string,
     options: Record<string, unknown>,
-    callback: () => T
+    callback: () => T,
   ): Promise<T>;
 }

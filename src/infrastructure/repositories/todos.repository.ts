@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 
-import { db, Transaction } from "@/drizzle";
+import { db, type Transaction } from "@/drizzle";
 import { todos } from "@/drizzle/schema";
-import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
-import { Todo, TodoInsert } from "@/src/entities/models/todo";
+import type { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
+import type { Todo, TodoInsert } from "@/src/entities/models/todo";
 import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 import type { ICrashReporterService } from "@/src/application/services/crash-reporter.service.interface";
 import { DatabaseOperationError } from "@/src/entities/errors/common";
@@ -11,7 +11,7 @@ import { DatabaseOperationError } from "@/src/entities/errors/common";
 export class TodosRepository implements ITodosRepository {
   constructor(
     private readonly instrumentationService: IInstrumentationService,
-    private readonly crashReporterService: ICrashReporterService
+    private readonly crashReporterService: ICrashReporterService,
   ) {}
 
   async getTodo(id: number): Promise<Todo | undefined> {
@@ -29,7 +29,7 @@ export class TodosRepository implements ITodosRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           return todo;
@@ -37,7 +37,7 @@ export class TodosRepository implements ITodosRepository {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
 
@@ -56,14 +56,14 @@ export class TodosRepository implements ITodosRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
           return usersTodos;
         } catch (err) {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
 
@@ -82,7 +82,7 @@ export class TodosRepository implements ITodosRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           if (created) {
@@ -94,14 +94,14 @@ export class TodosRepository implements ITodosRepository {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
 
   async updateTodo(
     id: number,
     input: Partial<TodoInsert>,
-    tx?: Transaction
+    tx?: Transaction,
   ): Promise<Todo> {
     const invoker = tx ?? db;
 
@@ -127,21 +127,21 @@ export class TodosRepository implements ITodosRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           if (updated) {
             return updated;
           } else {
             throw new DatabaseOperationError(
-              `Failed to update todo with ID ${id}`
+              `Failed to update todo with ID ${id}`,
             );
           }
         } catch (err) {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
 
@@ -163,7 +163,7 @@ export class TodosRepository implements ITodosRepository {
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute()
+            () => query.execute(),
           );
 
           if (!deleted) {
@@ -173,7 +173,7 @@ export class TodosRepository implements ITodosRepository {
           this.crashReporterService.report(err);
           throw err; // TODO: convert to Entities error
         }
-      }
+      },
     );
   }
 }

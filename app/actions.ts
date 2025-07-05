@@ -35,7 +35,7 @@ export async function createTodo(formData: FormData) {
 
       revalidatePath("/");
       return { success: true };
-    }
+    },
   );
 }
 
@@ -69,7 +69,7 @@ export async function toggleTodo(todoId: number) {
 
       revalidatePath("/");
       return { success: true };
-    }
+    },
   );
 }
 
@@ -104,6 +104,6 @@ export async function bulkUpdate(dirty: number[], deleted: number[]) {
 
       revalidatePath("/");
       return { success: true };
-    }
+    },
   );
 }

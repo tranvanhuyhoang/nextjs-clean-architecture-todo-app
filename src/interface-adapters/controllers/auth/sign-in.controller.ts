@@ -1,7 +1,7 @@
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
-import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
 import { InputParseError } from "@/src/entities/errors/common";
-import { Cookie } from "@/src/entities/models/cookie";
+import type { Cookie } from "@/src/entities/models/cookie";
 import { z } from "zod";
 
 const inputSchema = z.object({
@@ -15,7 +15,7 @@ export type ISignInUseCase = ReturnType<typeof signInUseCase>;
 export const signInController =
   (
     instrumentationService: IInstrumentationService,
-    signInUseCase: ISignInUseCase
+    signInUseCase: ISignInUseCase,
   ) =>
   async (input: Partial<z.infer<typeof inputSchema>>): Promise<Cookie> => {
     return await instrumentationService.startSpan(
@@ -31,6 +31,6 @@ export const signInController =
 
         const { cookie } = await signInUseCase(data);
         return cookie;
-      }
+      },
     );
   };

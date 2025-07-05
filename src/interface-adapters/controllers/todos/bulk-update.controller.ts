@@ -2,11 +2,11 @@ import { z } from "zod";
 
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { InputParseError } from "@/src/entities/errors/common";
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import { ITransactionManagerService } from "@/src/application/services/transaction-manager.service.interface";
-import { IToggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
-import { IDeleteTodoUseCase } from "@/src/application/use-cases/todos/delete-todo.use-case";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import type { ITransactionManagerService } from "@/src/application/services/transaction-manager.service.interface";
+import type { IToggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
+import type { IDeleteTodoUseCase } from "@/src/application/use-cases/todos/delete-todo.use-case";
 
 const inputSchema = z.object({
   dirty: z.array(z.number()),
@@ -21,11 +21,11 @@ export const bulkUpdateController =
     authenticationService: IAuthenticationService,
     transactionManagerService: ITransactionManagerService,
     toggleTodoUseCase: IToggleTodoUseCase,
-    deleteTodoUseCase: IDeleteTodoUseCase
+    deleteTodoUseCase: IDeleteTodoUseCase,
   ) =>
   async (
     input: z.infer<typeof inputSchema>,
-    sessionId: string | undefined
+    sessionId: string | undefined,
   ): Promise<void> => {
     return await instrumentationService.startSpan(
       {
@@ -34,7 +34,7 @@ export const bulkUpdateController =
       async () => {
         if (!sessionId) {
           throw new UnauthenticatedError(
-            "Must be logged in to bulk update todos"
+            "Must be logged in to bulk update todos",
           );
         }
         const { user } = await authenticationService.validateSession(sessionId);
@@ -54,8 +54,8 @@ export const bulkUpdateController =
               try {
                 await Promise.all(
                   dirty.map((t) =>
-                    toggleTodoUseCase({ todoId: t }, user.id, mainTx)
-                  )
+                    toggleTodoUseCase({ todoId: t }, user.id, mainTx),
+                  ),
                 );
               } catch (err) {
                 console.error(err);
@@ -69,8 +69,8 @@ export const bulkUpdateController =
                   try {
                     await Promise.all(
                       deleted.map((t) =>
-                        deleteTodoUseCase({ todoId: t }, user.id, deleteTx)
-                      )
+                        deleteTodoUseCase({ todoId: t }, user.id, deleteTx),
+                      ),
                     );
                   } catch (err) {
                     console.error(err);
@@ -78,11 +78,11 @@ export const bulkUpdateController =
                     deleteTx.rollback();
                   }
                 },
-                mainTx
+                mainTx,
               );
             });
-          }
+          },
         );
-      }
+      },
     );
   };

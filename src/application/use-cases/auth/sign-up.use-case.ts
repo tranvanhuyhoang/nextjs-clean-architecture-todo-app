@@ -1,7 +1,7 @@
 import { AuthenticationError } from "@/src/entities/errors/auth";
-import { Cookie } from "@/src/entities/models/cookie";
-import { Session } from "@/src/entities/models/session";
-import { User } from "@/src/entities/models/user";
+import type { Cookie } from "@/src/entities/models/cookie";
+import type { Session } from "@/src/entities/models/session";
+import type { User } from "@/src/entities/models/user";
 import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
 import type { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
@@ -12,7 +12,7 @@ export const signUpUseCase =
   (
     instrumentationService: IInstrumentationService,
     authenticationService: IAuthenticationService,
-    usersRepository: IUsersRepository
+    usersRepository: IUsersRepository,
   ) =>
   (input: {
     username: string;
@@ -26,7 +26,7 @@ export const signUpUseCase =
       { name: "signUp Use Case", op: "function" },
       async () => {
         const existingUser = await usersRepository.getUserByUsername(
-          input.username
+          input.username,
         );
         if (existingUser) {
           throw new AuthenticationError("Username taken");
@@ -40,9 +40,8 @@ export const signUpUseCase =
           password: input.password,
         });
 
-        const { cookie, session } = await authenticationService.createSession(
-          newUser
-        );
+        const { cookie, session } =
+          await authenticationService.createSession(newUser);
 
         return {
           cookie,
@@ -52,6 +51,6 @@ export const signUpUseCase =
             username: newUser.username,
           },
         };
-      }
+      },
     );
   };

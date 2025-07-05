@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 import { InputParseError } from "@/src/entities/errors/common";
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
-import { ISignUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { ISignUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
 
 const inputSchema = z
   .object({
@@ -30,10 +30,10 @@ export type ISignUpController = ReturnType<typeof signUpController>;
 export const signUpController =
   (
     instrumentationService: IInstrumentationService,
-    signUpUseCase: ISignUpUseCase
+    signUpUseCase: ISignUpUseCase,
   ) =>
   async (
-    input: Partial<z.infer<typeof inputSchema>>
+    input: Partial<z.infer<typeof inputSchema>>,
   ): Promise<ReturnType<typeof signUpUseCase>> => {
     return await instrumentationService.startSpan(
       { name: "signUp Controller" },
@@ -45,6 +45,6 @@ export const signUpController =
         }
 
         return await signUpUseCase(data);
-      }
+      },
     );
   };

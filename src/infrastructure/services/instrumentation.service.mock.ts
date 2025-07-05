@@ -1,9 +1,9 @@
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 
 export class MockInstrumentationService implements IInstrumentationService {
   startSpan<T>(
     _: { name: string; op?: string; attributes?: Record<string, unknown> },
-    callback: () => T
+    callback: () => T,
   ): T {
     return callback();
   }
@@ -11,7 +11,7 @@ export class MockInstrumentationService implements IInstrumentationService {
   async instrumentServerAction<T>(
     _: string,
     __: Record<string, unknown>,
-    callback: () => T
+    callback: () => T,
   ): Promise<T> {
     return callback();
   }

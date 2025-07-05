@@ -2,14 +2,14 @@ import { z } from "zod";
 
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { InputParseError } from "@/src/entities/errors/common";
-import { Todo } from "@/src/entities/models/todo";
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import { IToggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
+import type { Todo } from "@/src/entities/models/todo";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import type { IToggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
 
 function presenter(
   todo: Todo,
-  instrumentationService: IInstrumentationService
+  instrumentationService: IInstrumentationService,
 ) {
   return instrumentationService.startSpan(
     { name: "toggleTodo Presenter", op: "serialize" },
@@ -18,7 +18,7 @@ function presenter(
       todo: todo.todo,
       userId: todo.userId,
       completed: todo.completed,
-    })
+    }),
   );
 }
 
@@ -30,11 +30,11 @@ export const toggleTodoController =
   (
     instrumentationService: IInstrumentationService,
     authenticationService: IAuthenticationService,
-    toggleTodoUseCase: IToggleTodoUseCase
+    toggleTodoUseCase: IToggleTodoUseCase,
   ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>,
-    sessionId: string | undefined
+    sessionId: string | undefined,
   ): Promise<ReturnType<typeof presenter>> => {
     return await instrumentationService.startSpan(
       { name: "toggleTodo Controller" },
@@ -43,9 +43,8 @@ export const toggleTodoController =
           throw new UnauthenticatedError("Must be logged in to create a todo");
         }
 
-        const { session } = await authenticationService.validateSession(
-          sessionId
-        );
+        const { session } =
+          await authenticationService.validateSession(sessionId);
 
         const { data, error: inputParseError } = inputSchema.safeParse(input);
 
@@ -55,10 +54,10 @@ export const toggleTodoController =
 
         const todo = await toggleTodoUseCase(
           { todoId: data.todoId },
-          session.userId
+          session.userId,
         );
 
         return presenter(todo, instrumentationService);
-      }
+      },
     );
   };

@@ -2,15 +2,15 @@ import { z } from "zod";
 
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { InputParseError } from "@/src/entities/errors/common";
-import { Todo } from "@/src/entities/models/todo";
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import { ITransactionManagerService } from "@/src/application/services/transaction-manager.service.interface";
-import { ICreateTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
+import type { Todo } from "@/src/entities/models/todo";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import type { ITransactionManagerService } from "@/src/application/services/transaction-manager.service.interface";
+import type { ICreateTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
 
 function presenter(
   todos: Todo[],
-  instrumentationService: IInstrumentationService
+  instrumentationService: IInstrumentationService,
 ) {
   return instrumentationService.startSpan(
     { name: "createTodo Presenter", op: "serialize" },
@@ -21,7 +21,7 @@ function presenter(
         userId: todo.userId,
         completed: todo.completed,
       }));
-    }
+    },
   );
 }
 
@@ -34,11 +34,11 @@ export const createTodoController =
     instrumentationService: IInstrumentationService,
     authenticationService: IAuthenticationService,
     transactionManagerService: ITransactionManagerService,
-    createTodoUseCase: ICreateTodoUseCase
+    createTodoUseCase: ICreateTodoUseCase,
   ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>,
-    sessionId: string | undefined
+    sessionId: string | undefined,
   ): Promise<ReturnType<typeof presenter>> => {
     return await instrumentationService.startSpan(
       {
@@ -65,17 +65,17 @@ export const createTodoController =
               try {
                 return await Promise.all(
                   todosFromInput.map((t) =>
-                    createTodoUseCase({ todo: t }, user.id, tx)
-                  )
+                    createTodoUseCase({ todo: t }, user.id, tx),
+                  ),
                 );
               } catch (err) {
                 console.error("Rolling back!", err);
                 tx.rollback();
                 throw err;
               }
-            })
+            }),
         );
         return presenter(todos ?? [], instrumentationService);
-      }
+      },
     );
   };

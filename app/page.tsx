@@ -10,7 +10,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { redirect } from "next/navigation";
 import { CreateTodo } from "./add-todo";
 import { Todos } from "./todos";
-import { Todo } from "@/src/entities/models/todo";
+import type { Todo } from "@/src/entities/models/todo";
 import { UserMenu } from "@/components/ui/user-menu";
 
 async function getTodos(sessionId: string | undefined) {
@@ -23,7 +23,7 @@ async function getTodos(sessionId: string | undefined) {
     async () => {
       try {
         const getTodosForUserController = getInjection(
-          "IGetTodosForUserController"
+          "IGetTodosForUserController",
         );
         return await getTodosForUserController(sessionId);
       } catch (err) {
@@ -37,7 +37,7 @@ async function getTodos(sessionId: string | undefined) {
         crashReporterService.report(err);
         throw err;
       }
-    }
+    },
   );
 }
 

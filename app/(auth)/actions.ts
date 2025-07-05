@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getInjection } from "@/di/container";
-import { Cookie } from "@/src/entities/models/cookie";
+import type { Cookie } from "@/src/entities/models/cookie";
 import {
   AuthenticationError,
   UnauthenticatedError,
@@ -44,11 +44,11 @@ export async function signIn(formData: FormData) {
       (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
-        sessionCookie.attributes
+        sessionCookie.attributes,
       );
 
       redirect("/");
-    }
+    },
   );
 }
 
@@ -96,11 +96,11 @@ export async function signUp(formData: FormData) {
       cookies().set(
         sessionCookie.name,
         sessionCookie.value,
-        sessionCookie.attributes
+        sessionCookie.attributes,
       );
 
       redirect("/");
-    }
+    },
   );
 }
 
@@ -132,10 +132,10 @@ export async function signOut() {
       (await cookies()).set(
         blankCookie.name,
         blankCookie.value,
-        blankCookie.attributes
+        blankCookie.attributes,
       );
 
       redirect("/sign-in");
-    }
+    },
   );
 }

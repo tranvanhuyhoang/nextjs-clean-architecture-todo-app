@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 
-import { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
+import type { IInstrumentationService } from "@/src/application/services/instrumentation.service.interface";
 
 export class InstrumentationService implements IInstrumentationService {
   startSpan<T>(
@@ -9,7 +9,7 @@ export class InstrumentationService implements IInstrumentationService {
       op?: string;
       attributes?: Record<string, string | number | boolean | undefined>;
     },
-    callback: () => T
+    callback: () => T,
   ): T {
     return Sentry.startSpan(options, callback);
   }
@@ -17,7 +17,7 @@ export class InstrumentationService implements IInstrumentationService {
   instrumentServerAction<T>(
     name: string,
     options: Record<string, unknown>,
-    callback: () => T
+    callback: () => T,
   ): Promise<T> {
     return Sentry.withServerActionInstrumentation(name, options, callback);
   }
